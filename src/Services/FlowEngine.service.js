@@ -179,21 +179,8 @@ class FlowEngineService {
                 if (matchedOption) {
                     await this.logMessage(contact.phone, 'in', matchedOption.label, 'text', contact.current_node_id);
 
-                    // INTERCEPTAÇÃO: Se usuário marcado como desqualificado tentar retornar via "check_recurrent"
-                    if (contact.current_node_id === 'check_recurrent' &&
-                        matchedOption.value === 'sim' &&
-                        contact.variables.previously_disqualified === 'true') {
-
-                        console.log(`[FlowEngine] Bloqueando retorno de usuário desqualificado: ${contact.phone}`);
-                        // Redireciona para o descarte adequado (baseado no histórico ou padrão)
-                        // Vamos usar descarte_frio como padrão
-                        return {
-                            valid: true,
-                            nextNode: 'descarte_recorrente', // Nó específico que vamos criar
-                            saveAs: matchedOption.save_as || currentNode.save_as,
-                            value: matchedOption.value
-                        };
-                    }
+                    // INTERCEPTAÇÃO REMOVIDA: Usuários desqualificados podem tentar novamente
+                    // if (contact.current_node_id === 'check_recurrent'... )
 
                     return {
                         valid: true,

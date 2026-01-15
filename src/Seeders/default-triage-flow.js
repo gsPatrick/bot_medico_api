@@ -57,12 +57,12 @@ const triagemFlowNodes = {
     },
 
     // ============================================
-    // BOAS-VINDAS
+    // BOAS-VINDAS (ATUALIZADO COPYWRITING)
     // ============================================
     welcome: {
         type: 'message',
         // Usa {{name}} se disponível, que o FlowEngine substitui
-        content: '🎉 *Olá, {{name}}!*\n\nO Dr. Marcelo é especialista em tratamentos modernos e minimamente invasivos para *Ortopedia e Traumatologia*.\n\nVou fazer algumas perguntas rápidas para entender melhor como podemos ajudá-lo. Vamos lá? 👇',
+        content: 'Olá! Seja bem-vindo(a) ao consultório do Dr. Marcelo Giovanini Martins – Ortopedia especializada em Ombro e Joelho.\n\nTrabalhamos com uma abordagem moderna da ortopedia, mais resolutiva, buscando sempre tratamentos mais resolutivos e menos cirúrgicos, quando clinicamente indicados.\n\nPor essa característica da medicina atual, muitos dos procedimentos utilizados — como infiltrações avançadas e terapias regenerativas — ainda não são cobertos pelos planos de saúde, podendo envolver investimento particular.\n\nNosso objetivo é sempre avaliar cada caso individualmente e discutir, de forma transparente, as melhores opções de tratamento.',
         next_node: 'q_region'
     },
 
@@ -71,7 +71,7 @@ const triagemFlowNodes = {
     // ============================================
     q_region: {
         type: 'question',
-        content: '🦴 *Qual região do corpo está te incomodando?*',
+        content: '🦴 Para entendermos se conseguimos te ajudar... *Qual região você deseja tratar?*',
         save_as: 'regiao',
         options: [
             { id: '1', label: '💪 Ombro', value: 'ombro', next_node: 'q_problem' },
@@ -81,7 +81,7 @@ const triagemFlowNodes = {
     },
 
     // ============================================
-    // PERGUNTA: TIPO DE PROBLEMA
+    // PERGUNTA: TIPO DE PROBLEMA (ATUALIZADO LÓGICA)
     // ============================================
     q_problem: {
         type: 'question',
@@ -94,8 +94,9 @@ const triagemFlowNodes = {
             { id: '1', label: 'Dor crônica (há meses)', value: 'dor_cronica', description: 'Dor persistente há bastante tempo', next_node: 'q_modern' },
             { id: '2', label: 'Lesão esportiva', value: 'lesao', description: 'Machucado durante atividade física', next_node: 'q_modern' },
             { id: '3', label: 'Pós-cirurgia', value: 'cirurgia', description: 'Reabilitação ou problema pós-operatório', next_node: 'q_modern' },
-            { id: '4', label: 'Dor recente (poucos dias)', value: 'dor_recente', description: 'Começou a sentir há pouco tempo', next_node: 'descarte_frio' },
-            { id: '5', label: 'Não sei definir', value: 'nao_sei', description: 'Não tenho certeza do problema', next_node: 'descarte_frio' }
+            // MUDANÇA: Dores recentes e Não sei definir NÃO DESCARTAM MAIS. Seguem para q_modern.
+            { id: '4', label: 'Dor recente (poucos dias)', value: 'dor_recente', description: 'Começou a sentir há pouco tempo', next_node: 'q_modern' },
+            { id: '5', label: 'Não sei definir', value: 'nao_sei', description: 'Não tenho certeza do problema', next_node: 'q_modern' }
         ]
     },
 
@@ -186,25 +187,25 @@ const triagemFlowNodes = {
     },
 
     // ============================================
-    // DESCARTES
+    // DESCARTES (ATUALIZADO COPYWRITING EM TODOS)
     // ============================================
 
     // Descarte frio - não se encaixa no perfil
     descarte_frio: {
         type: 'disqualify',
-        content: '😊 Obrigado pelo seu contato!\n\nNo momento, nosso foco são tratamentos especializados para casos crônicos e lesões específicas.\n\nPara dores recentes ou avaliações gerais, recomendamos que você procure um ortopedista do seu convênio ou pronto-socorro para uma primeira avaliação.\n\n🙏 Desejamos sua pronta recuperação!\n\nSe sua situação mudar, sinta-se à vontade para nos procurar novamente.'
+        content: 'Obrigado pelo seu contato, porém como você não preenche os quesitos da forma de atendimento que o Dr Marcelo está mais habituado e para dinamizar sua melhora, te encaminharemos para um outro profissional que preenche melhor seu perfil de necessidade'
     },
 
     // Descarte convênio - só aceita plano
     descarte_convenio: {
         type: 'disqualify',
-        content: '😊 Entendemos sua situação!\n\nInfelizmente, nossos tratamentos especializados são realizados exclusivamente de forma particular, pois envolvem técnicas avançadas não cobertas por planos de saúde.\n\nRecomendamos que procure um ortopedista credenciado ao seu convênio.\n\n🙏 Desejamos sua pronta recuperação!'
+        content: 'Obrigado pelo seu contato, porém como você não preenche os quesitos da forma de atendimento que o Dr Marcelo está mais habituado e para dinamizar sua melhora, te encaminharemos para um outro profissional que preenche melhor seu perfil de necessidade'
     },
 
     // Descarte recorrente - bloqueia retorno de disqualificados
     descarte_recorrente: {
         type: 'disqualify',
-        content: '⚠️ Como informamos anteriormente, no momento não conseguimos atender casos com suas características (ex: somente convênio ou dores recentes).\n\nRecomendamos que siga as orientações anteriores.\n\nQualquer dúvida, estamos à disposição!'
+        content: 'Obrigado pelo seu contato, porém como você não preenche os quesitos da forma de atendimento que o Dr Marcelo está mais habituado e para dinamizar sua melhora, te encaminharemos para um outro profissional que preenche melhor seu perfil de necessidade'
     }
 };
 
