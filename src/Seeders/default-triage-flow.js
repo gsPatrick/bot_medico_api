@@ -214,7 +214,7 @@ const triagemFlowNodes = {
  */
 async function seedTriagemFlow() {
     try {
-        console.log('[Seeder] Verificando fluxo de triagem existente...');
+        console.log('[Seeder] Verificando fluxo de triagem existente... (FORCE UPDATE v2)');
 
         // Verifica se já existe um fluxo de triagem
         const existingFlow = await Flow.findOne({
