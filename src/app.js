@@ -94,6 +94,7 @@ async function startServer() {
             console.log(`║   🌐 URL: http://localhost:${PORT}                    ║`);
             console.log('║   📡 Webhook: POST /webhook                        ║');
             console.log('║   🔧 Fluxos: GET /api/flows                        ║');
+            console.log('║   🔓 Whitelist: DESATIVADA (Todos liberados)       ║');
             console.log('║                                                    ║');
             console.log('╚════════════════════════════════════════════════════╝');
             console.log('');
