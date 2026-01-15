@@ -119,7 +119,7 @@ const triagemFlowNodes = {
     // ============================================
     q_finance: {
         type: 'question',
-        content: '💰 Nossos tratamentos especializados são realizados de forma *particular* (não cobrimos por plano de saúde).\n\nVocê estaria disposto a avaliar opções de investimento para sua saúde?',
+        content: '💰 Em nossos tratamentos, quando indicados, muitas das vezes são realizados procedimentos não cobertos pelos convênios……\n\nVocê estaria disposto a avaliar opções de investimento para sua saúde?',
         save_as: 'financeiro',
         options: [
             { id: '1', label: '✅ Sim, posso avaliar', value: 'particular', next_node: 'q_goal' },
