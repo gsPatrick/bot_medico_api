@@ -13,196 +13,189 @@ const { Flow } = require('../Models');
 
 const triagemFlowNodes = {
     // ============================================
-    // NÓ INICIAL - Primeira vez com Dr. Marcelo?
+    // NÓ INICIAL
     // ============================================
     start: {
         type: 'question',
-        content: '👋 Olá! Seja bem-vindo ao consultório do *Dr. Marcelo*.\n\nÉ a primeira vez que você consulta com o Dr. Marcelo?',
+        content: 'Primeira vez com Dr Marcelo ?',
         save_as: 'primeira_vez',
         options: [
-            { id: '1', label: 'Sim, primeira vez', value: 'sim', next_node: 'q_name' },
-            { id: '2', label: 'Não, já consultei', value: 'nao', next_node: 'check_recurrent' }
+            { id: '1', label: 'Sim', value: 'sim', next_node: 'q_name' },
+            { id: '2', label: 'Não', value: 'nao', next_node: 'check_recurrent' }
         ]
     },
 
     // ============================================
-    // PERGUNTA: NOME SO CLIENTE 
+    // NOME (Mantido para coletar nome de novos)
     // ============================================
     q_name: {
         type: 'question',
         content: '📝 *Qual é o seu nome completo?*',
         save_as: 'name',
-        accept_free_text: true, // Habilita campo de texto livre
+        accept_free_text: true,
         next_node: 'welcome'
     },
 
     // ============================================
-    // VERIFICAÇÃO DE RECORRÊNCIA
+    // RECORRÊNCIA
     // ============================================
     check_recurrent: {
         type: 'question',
-        content: 'Entendi! O problema que você quer tratar agora *já foi tratado anteriormente* com o Dr. Marcelo?',
+        content: 'O problema atual já foi ou esta em tratamento com o Dr Marcelo ?',
         save_as: 'problema_recorrente',
         options: [
-            { id: '1', label: 'Sim, o mesmo problema', value: 'sim', next_node: 'handover_recorrente' },
-            { id: '2', label: 'Não, é um novo problema', value: 'nao', next_node: 'q_name' }
+            { id: '1', label: 'Sim', value: 'sim', next_node: 'handover_recorrente' },
+            { id: '2', label: 'Não', value: 'nao', next_node: 'welcome_recurrent' }
         ]
     },
 
-    // Handover para paciente recorrente com mesmo problema
     handover_recorrente: {
         type: 'handover',
-        content: '✅ Perfeito! Como você já é nosso paciente e está com um problema que já tratamos, vou transferir você diretamente para nossa equipe de atendimento.\n\nAguarde um momento, por favor! 🙏',
+        content: '✅ Encaminhando para a secretaria...',
         tags: ['RECORRENTE', 'RETORNO']
     },
 
     // ============================================
-    // BOAS-VINDAS (ATUALIZADO COPYWRITING)
+    // BOAS VINDAS (NOVO PACIENTE)
     // ============================================
     welcome: {
         type: 'message',
-        // Usa {{name}} se disponível, que o FlowEngine substitui
-        content: 'Olá! Seja bem-vindo(a) ao consultório do Dr. Marcelo Giovanini Martins – Ortopedia especializada em Ombro e Joelho.\n\nTrabalhamos com uma abordagem moderna da ortopedia, mais resolutiva, buscando sempre tratamentos mais resolutivos e menos cirúrgicos, quando clinicamente indicados.\n\nPor essa característica da medicina atual, muitos dos procedimentos utilizados — como infiltrações avançadas e terapias regenerativas — ainda não são cobertos pelos planos de saúde, podendo envolver investimento particular.\n\nNosso objetivo é sempre avaliar cada caso individualmente e discutir, de forma transparente, as melhores opções de tratamento.',
+        content: 'Olá! Seja bem-vindo(a) ao consultório do Dr. Marcelo Giovanini Martins – Ortopedia especializada em Ombro e Joelho.\n\nTrabalhamos com uma abordagem moderna da ortopedia, mais resolutiva, buscando sempre tratamentos mais resolutivos e menos cirúrgicos, quando clinicamente indicados.\n\nPor essa característica da medicina atual, muitos dos procedimentos utilizados — como infiltrações avançadas e terapias regenerativas — ainda não são cobertos pelos planos de saúde, podendo envolver investimento particular.\n\nNosso objetivo é sempre avaliar cada caso individualmente e discutir, de forma transparente, as melhores opções de tratamento.\n\nPara entendermos se conseguimos te ajudar da melhor forma, por favor responda:',
         next_node: 'q_region'
     },
 
     // ============================================
-    // PERGUNTA: REGIÃO DO CORPO
+    // BOAS VINDAS (RECORRENTE - NOVO PROBLEMA)
+    // ============================================
+    welcome_recurrent: {
+        type: 'message',
+        content: 'Atualmente Dr Marcelo está trabalhando com uma abordagem moderna da ortopedia, mais resolutiva, buscando sempre tratamentos mais resolutivos e menos cirúrgicos, quando clinicamente indicados.\n\nPor essa característica da medicina atual, muitos dos procedimentos utilizados — como infiltrações avançadas e terapias regenerativas — ainda não são cobertos pelos planos de saúde, podendo envolver investimento particular.\n\nNosso objetivo é sempre avaliar cada caso individualmente e discutir, de forma transparente, as melhores opções de tratamento.\n\nPara entendermos se conseguimos te ajudar da melhor forma, por favor responda:',
+        next_node: 'q_region'
+    },
+
+    // ============================================
+    // 1. REGIÃO
     // ============================================
     q_region: {
         type: 'question',
-        content: '🦴 Para entendermos se conseguimos te ajudar... *Qual região você deseja tratar?*',
+        content: 'Qual região você deseja tratar?',
         save_as: 'regiao',
         options: [
-            { id: '1', label: '💪 Ombro', value: 'ombro', next_node: 'q_problem' },
-            { id: '2', label: '🦵 Joelho', value: 'joelho', next_node: 'q_problem' },
-            { id: '3', label: '📍 Outra região', value: 'outra', next_node: 'q_problem' }
+            { id: '1', label: 'Ombro', value: 'ombro', next_node: 'q_problem' },
+            { id: '2', label: 'Joelho', value: 'joelho', next_node: 'q_problem' },
+            { id: '3', label: 'Outra região', value: 'outra', next_node: 'q_problem' }
         ]
     },
 
     // ============================================
-    // PERGUNTA: TIPO DE PROBLEMA (ATUALIZADO LÓGICA)
+    // 2. PROBLEMA
     // ============================================
     q_problem: {
         type: 'question',
-        content: '🔍 *Como você descreveria seu problema?*\n\nEscolha a opção que mais se aproxima da sua situação:',
+        content: 'Seu problema está mais relacionado a:',
         save_as: 'tipo_problema',
-        title: 'Tipo de Problema',
-        button_text: 'Ver opções',
-        list_title: 'Opções',
         options: [
-            { id: '1', label: 'Dor crônica (há meses)', value: 'dor_cronica', description: 'Dor persistente há bastante tempo', next_node: 'q_modern' },
-            { id: '2', label: 'Lesão esportiva', value: 'lesao', description: 'Machucado durante atividade física', next_node: 'q_modern' },
-            { id: '3', label: 'Pós-cirurgia', value: 'cirurgia', description: 'Reabilitação ou problema pós-operatório', next_node: 'q_modern' },
-            // MUDANÇA: Dores recentes e Não sei definir NÃO DESCARTAM MAIS. Seguem para q_modern.
-            { id: '4', label: 'Dor recente (poucos dias)', value: 'dor_recente', description: 'Começou a sentir há pouco tempo', next_node: 'q_modern' },
-            { id: '5', label: 'Não sei definir', value: 'nao_sei', description: 'Não tenho certeza do problema', next_node: 'q_modern' }
+            { id: '1', label: 'Dor crônica / desgaste / artrose', value: 'dor_cronica', next_node: 'q_modern' },
+            { id: '2', label: 'Lesão de tendão, ligamento ou cartilagem', value: 'lesao', next_node: 'q_modern' },
+            { id: '3', label: 'Avaliação para cirurgia', value: 'cirurgia', next_node: 'q_modern' },
+            // Regra mantida: não descartar (mesmo que PDF diga "não me interessa", user pediu para não descartar antes)
+            { id: '4', label: 'Dor recente por esforço físico ou trabalho', value: 'dor_recente', next_node: 'q_modern' },
+            { id: '5', label: 'Não sei ao certo', value: 'nao_sei', next_node: 'q_modern' }
         ]
     },
 
     // ============================================
-    // PERGUNTA: INTERESSE EM TRATAMENTO MODERNO
+    // 3. TRATAMENTOS MODERNOS
     // ============================================
     q_modern: {
         type: 'question',
-        content: '💡 O Dr. Marcelo utiliza *tratamentos modernos e inovadores*, como infiltrações guiadas, terapia por ondas de choque e técnicas regenerativas.\n\nVocê tem interesse em conhecer essas opções?',
+        content: 'Você estaria aberto(a) a conhecer e, se indicado clinicamente, utilizar tratamentos modernos como infiltrações, procedimentos guiados por ultrassom e terapias regenerativas?',
         save_as: 'interesse_moderno',
         options: [
-            { id: '1', label: '✅ Sim, tenho interesse', value: 'sim', next_node: 'q_finance' },
-            { id: '2', label: '🤔 Quero saber mais', value: 'saber_mais', next_node: 'q_finance' },
-            { id: '3', label: '❌ Prefiro tradicionais', value: 'tradicional', next_node: 'descarte_frio' }
+            { id: '1', label: 'Sim, tenho interesse', value: 'sim', next_node: 'q_finance' },
+            { id: '2', label: 'Talvez, gostaria de entender melhor', value: 'talvez', next_node: 'q_finance' },
+            { id: '3', label: 'Prefiro apenas tratamentos tradicionais', value: 'tradicional', next_node: 'descarte_frio' }
         ]
     },
 
     // ============================================
-    // PERGUNTA: FINANCEIRO (PARTICULAR vs CONVÊNIO)
+    // 4. FINANCEIRO
     // ============================================
     q_finance: {
         type: 'question',
-        content: '💰 Em nossos tratamentos, quando indicados, muitas das vezes são realizados procedimentos não cobertos pelos convênios……\n\nVocê estaria disposto a avaliar opções de investimento para sua saúde?',
+        content: 'Alguns tratamentos podem envolver investimento particular. Você se sente confortável em avaliar opções terapêuticas que eventualmente não sejam cobertas pelo convênio?',
         save_as: 'financeiro',
         options: [
-            { id: '1', label: '✅ Sim, posso avaliar', value: 'particular', next_node: 'q_goal' },
-            { id: '2', label: '💳 Tenho flexibilidade', value: 'flexivel', next_node: 'q_goal' },
-            { id: '3', label: '❌ Somente convênio', value: 'convenio', next_node: 'descarte_convenio' }
+            { id: '1', label: 'Sim', value: 'sim', next_node: 'q_goal' },
+            { id: '2', label: 'Depende do custo', value: 'depende', next_node: 'q_goal' },
+            { id: '3', label: 'Prefiro somente opções cobertas pelo plano', value: 'somente_plano', next_node: 'descarte_convenio' }
         ]
     },
 
     // ============================================
-    // PERGUNTA: OBJETIVO DO TRATAMENTO
+    // 5. OBJETIVO
     // ============================================
     q_goal: {
         type: 'question',
-        content: '🎯 *Qual é seu principal objetivo com o tratamento?*',
+        content: 'Qual é o seu principal objetivo com o tratamento?',
         save_as: 'objetivo',
         options: [
-            { id: '1', label: '🌟 Melhorar qualidade de vida', value: 'qualidade_vida', next_node: 'q_location' },
-            { id: '2', label: '⚽ Voltar ao esporte', value: 'esporte', next_node: 'q_location' },
-            { id: '3', label: '🏥 Evitar cirurgia', value: 'evitar_cirurgia', next_node: 'q_location' },
-            { id: '4', label: '🔎 Só quero uma avaliação', value: 'so_avaliacao', next_node: 'descarte_frio' }
+            { id: '1', label: 'Reduzir dor e melhorar qualidade de vida', value: 'qualidade_vida', next_node: 'q_location' },
+            { id: '2', label: 'Retornar ao esporte / atividade física', value: 'esporte', next_node: 'q_location' },
+            { id: '3', label: 'Evitar ou planejar cirurgia', value: 'evitar_cirurgia', next_node: 'q_location' },
+            { id: '4', label: 'Apenas uma avaliação simples', value: 'avaliacao_simples', next_node: 'descarte_frio' }
         ]
     },
 
     // ============================================
-    // PERGUNTA: LOCALIZAÇÃO
+    // 6. LOCALIZAÇÃO
     // ============================================
     q_location: {
         type: 'question',
-        content: '📍 *Onde você mora?*\n\nIsso nos ajuda a definir a melhor modalidade de atendimento.',
+        content: 'Você mora em:',
         save_as: 'localizacao',
         options: [
-            { id: '1', label: '🏙️ Grande Vitória (ES)', value: 'grande_vitoria', next_node: 'q_modalidade' },
-            { id: '2', label: '🗺️ Interior do ES', value: 'interior_es', next_node: 'msg_telemedicina' },
-            { id: '3', label: '✈️ Outro estado', value: 'outro_estado', next_node: 'msg_telemedicina' }
+            { id: '1', label: 'Grande Vitória', value: 'grande_vitoria', next_node: 'success_handover' },
+            { id: '2', label: 'Outra cidade / outro estado', value: 'outra_cidade', next_node: 'msg_telemedicina' }
         ]
     },
 
-    // Mensagem sobre telemedicina para quem mora longe
+    // ============================================
+    // TELEMEDICINA
+    // ============================================
     msg_telemedicina: {
-        type: 'message',
-        content: '📱 *Ótima notícia!*\n\nPara pacientes que moram fora da Grande Vitória, o Dr. Marcelo oferece *consultas por telemedicina* (videochamada), com a mesma qualidade do atendimento presencial.\n\nAssim você pode fazer uma avaliação inicial sem precisar se deslocar! 🎉',
-        next_node: 'q_modalidade'
-    },
-
-    // ============================================
-    // PERGUNTA: MODALIDADE (ONLINE vs PRESENCIAL)
-    // ============================================
-    q_modalidade: {
-        type: 'question',
-        content: '🖥️ *Como você prefere realizar sua consulta?*',
-        save_as: 'modalidade',
+        type: 'question', // Mudado para question pois tem botões
+        content: 'Atendemos pacientes de várias cidades e estados.\n\nPara maior comodidade, alguns pacientes optam por iniciar o atendimento por consulta online, que funciona como uma consulta médica normal, com avaliação, orientação e prescrição quando indicado.\n\nA consulta online é um atendimento médico particular, com honorários próprios.\n\nOutros pacientes preferem vir presencialmente desde a primeira consulta.\n\nVocê tem alguma preferência inicial?',
+        save_as: 'preferencia_consulta',
         options: [
-            { id: '1', label: '📱 Online (telemedicina)', value: 'online', next_node: 'success_handover' },
-            { id: '2', label: '🏥 Presencial', value: 'presencial', next_node: 'success_handover' }
+            { id: '1', label: 'Prefiro iniciar por consulta online', value: 'online', next_node: 'success_handover' },
+            { id: '2', label: 'Prefiro consulta presencial', value: 'presencial', next_node: 'success_handover' },
+            { id: '3', label: 'Ainda não sei', value: 'nao_sei', next_node: 'success_handover' }
         ]
     },
 
     // ============================================
-    // SUCESSO - HANDOVER PARA ATENDIMENTO
+    // SUCESSO
     // ============================================
     success_handover: {
         type: 'handover',
-        content: '🎉 *Excelente! Você está qualificado para agendar sua consulta!*\n\n✅ Analisei suas respostas e você é um ótimo candidato para os tratamentos do Dr. Marcelo.\n\nUm membro da nossa equipe entrará em contato em breve para agendar o melhor horário para você.\n\n⏰ Horário de atendimento: Segunda a Sexta, 8h às 18h\n\nAguarde um momento! 🙏',
+        content: '🎉 Obrigado pelas respostas! Um atendente entrará em contato em breve.',
         tags: ['PREMIUM', 'QUALIFICADO']
     },
 
     // ============================================
-    // DESCARTES (ATUALIZADO COPYWRITING EM TODOS)
+    // DESCARTES (Texto Padrão Aprovado)
     // ============================================
-
-    // Descarte frio - não se encaixa no perfil
     descarte_frio: {
         type: 'disqualify',
         content: 'Obrigado pelo seu contato, porém como você não preenche os quesitos da forma de atendimento que o Dr Marcelo está mais habituado e para dinamizar sua melhora, te encaminharemos para um outro profissional que preenche melhor seu perfil de necessidade'
     },
 
-    // Descarte convênio - só aceita plano
     descarte_convenio: {
         type: 'disqualify',
         content: 'Obrigado pelo seu contato, porém como você não preenche os quesitos da forma de atendimento que o Dr Marcelo está mais habituado e para dinamizar sua melhora, te encaminharemos para um outro profissional que preenche melhor seu perfil de necessidade'
     },
 
-    // Descarte recorrente - bloqueia retorno de disqualificados
     descarte_recorrente: {
         type: 'disqualify',
         content: 'Obrigado pelo seu contato, porém como você não preenche os quesitos da forma de atendimento que o Dr Marcelo está mais habituado e para dinamizar sua melhora, te encaminharemos para um outro profissional que preenche melhor seu perfil de necessidade'
@@ -214,7 +207,7 @@ const triagemFlowNodes = {
  */
 async function seedTriagemFlow() {
     try {
-        console.log('[Seeder] Verificando fluxo de triagem existente... (FORCE UPDATE v2)');
+        console.log('[Seeder] Verificando fluxo de triagem existente... (FORCE UPDATE v3)');
 
         // Verifica se já existe um fluxo de triagem
         const existingFlow = await Flow.findOne({
