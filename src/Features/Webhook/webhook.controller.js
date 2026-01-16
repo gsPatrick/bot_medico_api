@@ -87,6 +87,13 @@ const handleWebhook = async (req, res) => {
             return res.sendStatus(200);
         }
 
+        // --- BLOCK GROUP MESSAGES ---
+        // Verifica se a mensagem veio de um grupo e ignora
+        if (parsed.phone.includes('@g.us') || parsed.phone.includes('group')) {
+            console.log(`[Webhook] Mensagem de grupo ignorada: ${parsed.phone}`);
+            return res.sendStatus(200);
+        }
+
         // Processa via FlowEngine
         await FlowEngine.processMessage(parsed.phone, {
             text: parsed.text,

@@ -76,7 +76,7 @@ async function startServer() {
 
         // 2. Sincroniza os models (cria tabelas se não existirem)
         console.log('[Database] Sincronizando models...');
-        await sequelize.sync({ force: true }); // Creates tables if they don't exist (DROPS existing if force: true)
+        await sequelize.sync({ alter: true }); // Updates tables if they exist (force: false)
         console.log('[Database] ✅ Models sincronizados!');
 
         // 3. Executa o seeder do fluxo de triagem

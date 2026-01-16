@@ -13,11 +13,12 @@ class ZApiService {
         });
     }
 
-    /**
-     * Formata o número de telefone para o padrão Z-API
-     * Remove caracteres especiais e garante formato DDI+DDD+Número
-     */
     formatPhone(phone) {
+        // Se for grupo (contém @ ou -), retorna apenas removendo espaços
+        if (phone.includes('@') || phone.includes('-')) {
+            return phone.trim();
+        }
+
         // Remove tudo que não for número
         let formatted = phone.replace(/\D/g, '');
 
