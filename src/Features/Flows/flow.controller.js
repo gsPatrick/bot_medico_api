@@ -209,6 +209,25 @@ const duplicateFlow = async (req, res) => {
     }
 };
 
+/**
+ * Executa o Seeder de Triagem
+ */
+const runSeeder = async (req, res) => {
+    try {
+        const { seedTriagemFlow } = require('../../Seeders/default-triage-flow');
+        const flow = await seedTriagemFlow();
+
+        res.status(201).json({
+            success: true,
+            message: 'Fluxo de triagem semeado com sucesso!',
+            data: flow
+        });
+    } catch (error) {
+        console.error('[FlowController] Erro ao rodar seeder:', error);
+        res.status(500).json({ success: false, error: error.message });
+    }
+};
+
 module.exports = {
     listFlows,
     getFlow,
@@ -216,5 +235,6 @@ module.exports = {
     updateFlow,
     deleteFlow,
     activateFlow,
-    duplicateFlow
+    duplicateFlow,
+    runSeeder
 };

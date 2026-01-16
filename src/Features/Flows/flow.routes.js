@@ -28,6 +28,9 @@ router.delete('/:id', deleteFlow);
 // POST /api/flows/:id/activate - Ativa um fluxo
 router.post('/:id/activate', activateFlow);
 
+// POST /api/flows/seed - Roda o seeder de triagem
+router.post('/seed', require('./flow.controller').runSeeder);
+
 // POST /api/flows/:id/duplicate - Duplica um fluxo
 router.post('/:id/duplicate', duplicateFlow);
 
