@@ -156,3 +156,28 @@ exports.reactivateContact = async (req, res) => {
         });
     }
 };
+
+/**
+ * Reseta TODOS os contatos para o estado inicial (limpa o sistema)
+ */
+exports.resetAllContacts = async (req, res) => {
+    try {
+        // Deleta todos os contatos e mensagens
+        await Message.destroy({ where: {} });
+        await Contact.destroy({ where: {} });
+
+        console.log('[Contacts] RESET GERAL - Todos os contatos e mensagens foram removidos');
+
+        res.json({
+            success: true,
+            message: 'Todos os contatos foram resetados. O sistema está limpo!'
+        });
+
+    } catch (error) {
+        console.error('[Contacts] Erro ao resetar contatos:', error);
+        res.status(500).json({
+            success: false,
+            error: 'Erro ao resetar contatos'
+        });
+    }
+};

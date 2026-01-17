@@ -54,6 +54,13 @@ class FlowEngineService {
 
             // 5. Processa o input (valida resposta)
             const processResult = await this.processInput(contact, currentNode, messageData, flow);
+
+            // Se a mensagem foi ignorada (texto quando esperava botão), não faz nada
+            if (processResult.ignored) {
+                console.log(`[FlowEngine] Mensagem ignorada silenciosamente de ${phone}`);
+                return;
+            }
+
             if (!processResult.valid) {
                 // Resposta inválida - reenvia a pergunta
                 await this.executeNode(contact, currentNode, flow);
@@ -167,9 +174,17 @@ class FlowEngineService {
         // Para nós de pergunta
         if (currentNode.type === 'question') {
             const userResponse = this.extractUserResponse(messageData);
+            const hasButtonPayload = !!messageData.buttonPayload || !!messageData.listPayload;
 
-            // 1. Se tem opções, valida contra elas
+            // 1. Se tem opções, REQUER clique em botão (ignora texto digitado)
             if (currentNode.options && currentNode.options.length > 0) {
+                // Se não é um clique de botão, ignora completamente a mensagem
+                if (!hasButtonPayload) {
+                    console.log(`[FlowEngine] Mensagem de texto ignorada (esperando botão) de ${contact.phone}: "${userResponse}"`);
+                    // Retorna null para indicar que a mensagem deve ser ignorada silenciosamente
+                    return { ignored: true };
+                }
+
                 const matchedOption = currentNode.options.find(opt => {
                     return opt.id === userResponse ||
                         opt.label.toLowerCase() === userResponse.toLowerCase() ||
@@ -179,9 +194,6 @@ class FlowEngineService {
                 if (matchedOption) {
                     await this.logMessage(contact.phone, 'in', matchedOption.label, 'text', contact.current_node_id);
 
-                    // INTERCEPTAÇÃO REMOVIDA: Usuários desqualificados podem tentar novamente
-                    // if (contact.current_node_id === 'check_recurrent'... )
-
                     return {
                         valid: true,
                         nextNode: matchedOption.next_node,
@@ -189,30 +201,26 @@ class FlowEngineService {
                         value: matchedOption.value || matchedOption.label
                     };
                 }
+
+                // Botão clicado mas não reconhecido (pode ser de uma mensagem antiga)
+                console.log(`[FlowEngine] Botão não reconhecido de ${contact.phone}: "${userResponse}"`);
+                return { ignored: true };
             }
 
-            // 2. Se aceita texto livre (mesmo sem opções ou se não casou com opções)
-            // AUTO-FIX: Se nã tem opções definidas, assumimos que é texto livre
-            const isFreeText = currentNode.accept_free_text || (!currentNode.options || currentNode.options.length === 0);
+            // 2. Perguntas SEM opções (como nome) aceitam texto livre
+            await this.logMessage(contact.phone, 'in', userResponse, 'text', contact.current_node_id);
 
-            if (isFreeText) {
-                await this.logMessage(contact.phone, 'in', userResponse, 'text', contact.current_node_id);
-
-                // Se o nó salva em 'name', atualizamos o nome do contato também
-                if (currentNode.save_as === 'name') {
-                    await contact.update({ name: userResponse });
-                }
-
-                return {
-                    valid: true,
-                    nextNode: currentNode.next_node, // Para input de texto, usa next_node direto
-                    saveAs: currentNode.save_as,
-                    value: userResponse
-                };
+            // Se o nó salva em 'name', atualizamos o nome do contato também
+            if (currentNode.save_as === 'name') {
+                await contact.update({ name: userResponse });
             }
 
-            console.log(`[FlowEngine] Resposta inválida de ${contact.phone}: ${userResponse}`);
-            return { valid: false };
+            return {
+                valid: true,
+                nextNode: currentNode.next_node,
+                saveAs: currentNode.save_as,
+                value: userResponse
+            };
         }
 
         return { valid: true, nextNode: currentNode.next_node };

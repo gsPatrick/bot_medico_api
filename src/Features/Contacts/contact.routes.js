@@ -17,4 +17,7 @@ router.get('/:phone/messages', contactController.getMessages);
 // Reativar bot para um contato
 router.post('/:phone/reactivate', contactController.reactivateContact);
 
+// RESET GERAL - Remove todos os contatos e mensagens
+router.post('/reset-all', contactController.resetAllContacts);
+
 module.exports = router;
