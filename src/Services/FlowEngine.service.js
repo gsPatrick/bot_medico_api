@@ -192,7 +192,10 @@ class FlowEngineService {
             }
 
             // 2. Se aceita texto livre (mesmo sem opções ou se não casou com opções)
-            if (currentNode.accept_free_text) {
+            // AUTO-FIX: Se nã tem opções definidas, assumimos que é texto livre
+            const isFreeText = currentNode.accept_free_text || (!currentNode.options || currentNode.options.length === 0);
+
+            if (isFreeText) {
                 await this.logMessage(contact.phone, 'in', userResponse, 'text', contact.current_node_id);
 
                 // Se o nó salva em 'name', atualizamos o nome do contato também
