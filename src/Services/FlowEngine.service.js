@@ -28,6 +28,10 @@ class FlowEngineService {
                     current_flow_id: null,
                     variables: {} // Limpa variáveis também se desejar um reset completo
                 });
+
+                // Envia mensagem de confirmação
+                await ZApiService.sendText(phone, '🔄 Bot resetado com sucesso! Iniciando novamente...');
+
                 await this.logMessage(phone, 'in', '@! (Reset Forçado)', 'text', null);
                 // Força o reinício imediato enviando null para cair no startDefaultFlow
                 contact = await this.startDefaultFlow(contact);
