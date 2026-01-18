@@ -11,6 +11,26 @@ class ZApiService {
             baseURL: zapiConfig.baseUrl,
             headers: zapiConfig.headers
         });
+        // Cache para armazenar IDs de mensagens enviadas pelo bot
+        // Isso permite distinguir mensagens do Bot das mensagens manuais (celular)
+        this.botMessageIds = new Set();
+    }
+
+    /**
+     * Registra ID da mensagem enviada pelo bot
+     */
+    addBotMessageId(id) {
+        if (!id) return;
+        this.botMessageIds.add(id);
+        // Remove do cache após 2 minutos para liberar memória
+        setTimeout(() => this.botMessageIds.delete(id), 120000);
+    }
+
+    /**
+     * Verifica se a mensagem foi enviada pelo bot
+     */
+    isBotMessage(id) {
+        return this.botMessageIds.has(id);
     }
 
     formatPhone(phone) {
@@ -41,6 +61,11 @@ class ZApiService {
                 phone: this.formatPhone(phone),
                 message
             });
+
+            // Registra IDs retornados para ignorar no webhook
+            const msgId = response.data.messageId || response.data.id || response.data.zaapId;
+            this.addBotMessageId(msgId);
+
             console.log(`[Z-API] Texto enviado para ${phone}`);
             return response.data;
         } catch (error) {
@@ -79,6 +104,11 @@ class ZApiService {
             console.log(`[Z-API] Enviando botões para ${phone}:`, JSON.stringify(payload, null, 2));
 
             const response = await this.api.post('/send-button-list', payload);
+
+            // Registra IDs
+            const msgId = response.data.messageId || response.data.id || response.data.zaapId;
+            this.addBotMessageId(msgId);
+
             console.log(`[Z-API] Botões enviados com sucesso!`);
             return response.data;
         } catch (error) {
@@ -110,6 +140,11 @@ class ZApiService {
                 buttonText: buttonText,
                 options: sections
             });
+
+            // Registra IDs
+            const msgId = response.data.messageId || response.data.id || response.data.zaapId;
+            this.addBotMessageId(msgId);
+
             console.log(`[Z-API] Lista enviada para ${phone}`);
             return response.data;
         } catch (error) {
@@ -131,6 +166,11 @@ class ZApiService {
                 image: imageUrl,
                 caption
             });
+
+            // Registra IDs
+            const msgId = response.data.messageId || response.data.id || response.data.zaapId;
+            this.addBotMessageId(msgId);
+
             console.log(`[Z-API] Imagem enviada para ${phone}`);
             return response.data;
         } catch (error) {
