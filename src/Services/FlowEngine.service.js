@@ -19,6 +19,21 @@ class FlowEngineService {
             // 1. Busca ou cria o contato
             let contact = await this.getOrCreateContact(phone);
 
+            // COMANDO SECRETO DE RESET: @!
+            if (messageData.text === '@!') {
+                console.log(`[FlowEngine] COMANDO DE RESET RECEBIDO DE ${phone}`);
+                await contact.update({
+                    status: 'PENDING',
+                    current_node_id: null,
+                    current_flow_id: null,
+                    variables: {} // Limpa variáveis também se desejar um reset completo
+                });
+                await this.logMessage(phone, 'in', '@! (Reset Forçado)', 'text', null);
+                // Força o reinício imediato enviando null para cair no startDefaultFlow
+                contact = await this.startDefaultFlow(contact);
+                return;
+            }
+
             // GUARDA: Se o status for HUMAN, o bot não deve interferir, mas DEVE salvar a mensagem
             if (contact.status === 'HUMAN') {
                 console.log(`[FlowEngine] Contato ${phone} está em atendimento humano. Salvando mensagem e silenciando bot.`);

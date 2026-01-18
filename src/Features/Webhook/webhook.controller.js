@@ -11,10 +11,14 @@ function parseZApiPayload(body) {
 
     // Extrai texto da mensagem
     let text = '';
-    if (body.text?.message) {
+    if (typeof body.text === 'string') {
+        text = body.text;
+    } else if (body.text?.message) {
         text = body.text.message;
     } else if (body.message) {
         text = body.message;
+    } else if (body.content) {
+        text = body.content;
     }
 
     // Extrai payload de botão (quando usuário clica em botão)
