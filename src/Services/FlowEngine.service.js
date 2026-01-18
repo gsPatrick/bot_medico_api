@@ -19,9 +19,14 @@ class FlowEngineService {
             // 1. Busca ou cria o contato
             let contact = await this.getOrCreateContact(phone);
 
-            // GUARDA: Se o status for HUMAN, o bot não deve interferir
+            // GUARDA: Se o status for HUMAN, o bot não deve interferir, mas DEVE salvar a mensagem
             if (contact.status === 'HUMAN') {
-                console.log(`[FlowEngine] Contato ${phone} está em atendimento humano. Bot silenciado.`);
+                console.log(`[FlowEngine] Contato ${phone} está em atendimento humano. Salvando mensagem e silenciando bot.`);
+
+                // Salva a mensagem no histórico mesmo com bot desligado
+                const userResponse = this.extractUserResponse(messageData);
+                await this.logMessage(phone, 'in', userResponse, 'text', null); // null pois não está em nenhum nó
+
                 return;
             }
 
@@ -381,7 +386,7 @@ class FlowEngineService {
         // Atualiza status e tags
         const newTags = [...(contact.tags || []), ...(node.tags || [])];
         await contact.update({
-            status: 'FINISHED', // Status FINISHED indica que o fluxo acabou, mas o bot NÃO está travado (diferente de HUMAN)
+            status: 'HUMAN', // Status HUMAN desliga o bot para este contato
             tags: [...new Set(newTags)], // Remove duplicatas
             current_node_id: null
         });
@@ -407,7 +412,7 @@ class FlowEngineService {
                     summary += `- *${formattedKey}:* ${value}\n`;
                 }
 
-                summary += `\n🔗 *Link para o Chat:* https://sistema-marcelo.vercel.app/dashboard/messages/${contact.phone}`;
+                summary += `\n🔗 *Link para o Chat:* http://localhost:3000/dashboard/chat/${contact.phone}`;
 
                 // Envia para todos os números configurados
                 for (const setting of activeSettings) {

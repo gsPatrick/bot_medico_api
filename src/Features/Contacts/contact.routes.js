@@ -14,9 +14,6 @@ router.put('/:phone', contactController.updateContact);
 // Listar mensagens de um contato
 router.get('/:phone/messages', contactController.getMessages);
 
-// Enviar mensagem manual (aciona Human Takeover)
-router.post('/:phone/messages', contactController.sendMessage);
-
 // Reativar bot para um contato
 router.post('/:phone/reactivate', contactController.reactivateContact);
 

@@ -38,14 +38,12 @@ function parseZApiPayload(body) {
     }
 
     return {
-        // Se for enviado por mim (fromMe), o 'phone' alvo é o 'to' (removendo @s.whatsapp.net se houver)
-        // Se for recebido, o 'phone' é o 'from' ou 'phone'
-        phone: isFromMe ? (body.to || '').replace('@s.whatsapp.net', '') : (phone || '').replace('@s.whatsapp.net', ''),
+        phone,
         isFromMe,
         text,
         buttonPayload,
         listPayload,
-        messageId: body.messageId || body.id?.id || body.id,
+        messageId: body.messageId || body.id?.id,
         timestamp: body.momment || body.timestamp || Date.now(),
         type: body.type || 'text',
         raw: body
@@ -59,47 +57,20 @@ function parseZApiPayload(body) {
 const handleWebhook = async (req, res) => {
     try {
         const parsed = parseZApiPayload(req.body);
-        const ZApiService = require('../../Services/ZApi.service');
-        const { Contact } = require('../../Models');
 
         console.log('[Webhook] Mensagem recebida:', {
             phone: parsed.phone,
             text: parsed.text,
-            isFromMe: parsed.isFromMe,
-            id: parsed.messageId
+            buttonPayload: parsed.buttonPayload,
+            listPayload: parsed.listPayload,
+            isFromMe: parsed.isFromMe
         });
 
-        // =========================================================================
-        // LÓGICA DE INTERVENÇÃO HUMANA (CELULAR/MOBILE)
-        // =========================================================================
-        // Se a mensagem foi enviada "por mim" (pela empresa), precisamos distinguir:
-        // 1. Foi o ROBÔ que enviou? (ignorar eco)
-        // 2. Foi o HUMANO (dono) que enviou pelo celular? (pausar robô)
-
+        // Ignora mensagens enviadas por mim (evita loop)
         if (parsed.isFromMe) {
-            // Verifica se este ID foi gerado pelo nosso bot recentemente
-            if (ZApiService.isBotMessage(parsed.messageId)) {
-                console.log('[Webhook] ECO de mensagem do Bot ignorado.');
-                return res.json({ message: 'Ignored (Bot Echo)' });
-            }
-
-            // Se NÃO foi o bot, então é um humano respondendo pelo celular!
-            console.log(`[Webhook] 🚨 INTERVENÇÃO HUMANA DETECTADA (Mobile) para ${parsed.phone}`);
-
-            if (parsed.phone) {
-                const contact = await Contact.findByPk(parsed.phone);
-                if (contact && contact.status !== 'HUMAN') {
-                    await contact.update({
-                        status: 'HUMAN',
-                        current_node_id: null
-                    });
-                    console.log(`[Webhook] Bot pausado para ${parsed.phone} devido a resposta manual via celular.`);
-                }
-            }
-
-            return res.json({ message: 'Human Takeover Activated' });
+            console.log('[Webhook] Mensagem própria ignorada');
+            return res.json({ message: 'Ignored (fromMe)' });
         }
-        // =========================================================================
 
         // Restrição removida para liberar todos os números
         console.log(`[Webhook] Mensagem recebida de: ${parsed.phone}`);
