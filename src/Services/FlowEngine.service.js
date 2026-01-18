@@ -381,7 +381,7 @@ class FlowEngineService {
         // Atualiza status e tags
         const newTags = [...(contact.tags || []), ...(node.tags || [])];
         await contact.update({
-            status: 'HUMAN', // Status HUMAN desliga o bot para este contato
+            status: 'FINISHED', // Status FINISHED indica que o fluxo acabou, mas o bot NÃO está travado (diferente de HUMAN)
             tags: [...new Set(newTags)], // Remove duplicatas
             current_node_id: null
         });
@@ -407,7 +407,7 @@ class FlowEngineService {
                     summary += `- *${formattedKey}:* ${value}\n`;
                 }
 
-                summary += `\n🔗 *Link para o Chat:* http://localhost:3000/dashboard/chat/${contact.phone}`;
+                summary += `\n🔗 *Link para o Chat:* https://sistema-marcelo.vercel.app/dashboard/messages/${contact.phone}`;
 
                 // Envia para todos os números configurados
                 for (const setting of activeSettings) {
