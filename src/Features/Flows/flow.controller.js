@@ -228,6 +228,29 @@ const runSeeder = async (req, res) => {
     }
 };
 
+/**
+ * Exporta o fluxo como JSON (Download)
+ */
+const exportFlow = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const flow = await Flow.findByPk(id);
+
+        if (!flow) {
+            return res.status(404).json({ success: false, error: 'Fluxo não encontrado' });
+        }
+
+        // Retorna o JSON do fluxo diretamente
+        res.header('Content-Type', 'application/json');
+        res.attachment(`${flow.name.replace(/[^a-z0-9]/gi, '_').toLowerCase()}.json`);
+        res.send(JSON.stringify(flow, null, 2));
+
+    } catch (error) {
+        console.error('[FlowController] Erro ao exportar fluxo:', error);
+        res.status(500).json({ success: false, error: error.message });
+    }
+};
+
 module.exports = {
     listFlows,
     getFlow,
@@ -236,5 +259,6 @@ module.exports = {
     deleteFlow,
     activateFlow,
     duplicateFlow,
-    runSeeder
+    runSeeder,
+    exportFlow
 };

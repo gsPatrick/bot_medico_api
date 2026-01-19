@@ -34,4 +34,7 @@ router.post('/seed', require('./flow.controller').runSeeder);
 // POST /api/flows/:id/duplicate - Duplica um fluxo
 router.post('/:id/duplicate', duplicateFlow);
 
+// GET /api/flows/:id/export - Exporta o fluxo como JSON
+router.get('/:id/export', require('./flow.controller').exportFlow);
+
 module.exports = router;
