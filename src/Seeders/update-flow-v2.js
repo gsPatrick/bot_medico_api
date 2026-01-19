@@ -37,12 +37,34 @@ const updateFlowV2 = async () => {
                 "type": "question",
                 "content": "Você estaria aberto(a) a conhecer e, se indicado clinicamente, utilizar tratamentos modernos como infiltrações, procedimentos guiados por ultrassom e terapias regenerativas?",
                 "options": [
-                    { "id": "1", "label": "Sim, tenho interesse", "value": "sim", "next_node": "success_handover" }, // ALTERADO: Vai direto para Handover
-                    { "id": "2", "label": "Talvez, gostaria de entender melhor", "value": "talvez", "next_node": "success_handover" }, // ALTERADO: Vai direto para Handover
-                    { "id": "3", "label": "Prefiro apenas tratamentos tradicionais", "value": "tradicional", "next_node": "descarte_frio" }
+                    { "id": "1", "label": "Sim, tenho interesse", "value": "sim", "next_node": "success_handover" },
+                    { "id": "2", "label": "Talvez, gostaria de entender melhor", "value": "talvez", "next_node": "success_handover" },
+                    { "id": "3", "label": "Prefiro apenas tratamentos tradicionais", "value": "tradicional", "next_node": "q_finance_soft" } // Caminho 'tênue'
                 ],
                 "save_as": "interesse_moderno"
             },
+
+            // --- CAMINHO DE REJEIÇÃO SUAVE (SOFT REJECTION PATH) ---
+            "q_finance_soft": {
+                "type": "question",
+                "content": "Alguns tratamentos podem envolver investimento particular. Você se sente confortável em avaliar opções terapêuticas que eventualmente não sejam cobertas pelo convênio?",
+                "options": [{ "id": "1", "label": "Sim", "value": "sim", "next_node": "q_goal_soft" }, { "id": "2", "label": "Depende do custo", "value": "depende", "next_node": "q_goal_soft" }, { "id": "3", "label": "Prefiro somente opções cobertas pelo plano", "value": "somente_plano", "next_node": "descarte_convenio" }],
+                "save_as": "financeiro_soft"
+            },
+            "q_goal_soft": {
+                "type": "question",
+                "content": "Qual é o seu principal objetivo com o tratamento?",
+                "options": [{ "id": "1", "label": "Reduzir dor e melhorar qualidade de vida", "value": "qualidade_vida", "next_node": "q_location_soft" }, { "id": "2", "label": "Retornar ao esporte / atividade física", "value": "esporte", "next_node": "q_location_soft" }, { "id": "3", "label": "Evitar ou planejar cirurgia", "value": "evitar_cirurgia", "next_node": "q_location_soft" }, { "id": "4", "label": "Apenas uma avaliação simples", "value": "avaliacao_simples", "next_node": "descarte_frio" }],
+                "save_as": "objetivo_soft"
+            },
+            "q_location_soft": {
+                "type": "question",
+                "content": "Você mora em:",
+                "options": [{ "id": "1", "label": "Grande Vitória", "value": "grande_vitoria", "next_node": "descarte_frio" }, { "id": "2", "label": "Outra cidade / outro estado", "value": "outra_cidade", "next_node": "descarte_frio" }], // Fim da linha: Descarte
+                "save_as": "localizacao_soft"
+            },
+            // -------------------------------------------------------
+
             "q_region": {
                 "type": "question",
                 "content": "Qual região você deseja tratar?",
