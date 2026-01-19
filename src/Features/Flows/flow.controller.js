@@ -251,6 +251,25 @@ const exportFlow = async (req, res) => {
     }
 };
 
+/**
+ * Roda a atualização V2 (Skip Questions)
+ */
+const runUpdateV2 = async (req, res) => {
+    try {
+        const { updateFlowV2 } = require('../../Seeders/update-flow-v2');
+        const flow = await updateFlowV2();
+
+        res.status(200).json({
+            success: true,
+            message: 'Fluxo atualizado com sucesso para V2 (Curto)!',
+            data: flow
+        });
+    } catch (error) {
+        console.error('[FlowController] Erro ao rodar update v2:', error);
+        res.status(500).json({ success: false, error: error.message });
+    }
+};
+
 module.exports = {
     listFlows,
     getFlow,
@@ -260,5 +279,6 @@ module.exports = {
     activateFlow,
     duplicateFlow,
     runSeeder,
-    exportFlow
+    exportFlow,
+    runUpdateV2
 };

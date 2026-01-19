@@ -37,4 +37,7 @@ router.post('/:id/duplicate', duplicateFlow);
 // GET /api/flows/:id/export - Exporta o fluxo como JSON
 router.get('/:id/export', require('./flow.controller').exportFlow);
 
+// POST /api/flows/update-v2 - Aplica a atualização de lógica (Skip Questions)
+router.post('/update-v2', require('./flow.controller').runUpdateV2);
+
 module.exports = router;
