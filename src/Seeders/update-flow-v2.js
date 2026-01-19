@@ -38,7 +38,7 @@ const updateFlowV2 = async () => {
                 "content": "Você estaria aberto(a) a conhecer e, se indicado clinicamente, utilizar tratamentos modernos como infiltrações, procedimentos guiados por ultrassom e terapias regenerativas?",
                 "options": [
                     { "id": "1", "label": "Sim, tenho interesse", "value": "sim", "next_node": "success_handover" },
-                    { "id": "2", "label": "Talvez, gostaria de entender melhor", "value": "talvez", "next_node": "success_handover" },
+                    { "id": "2", "label": "Talvez, gostaria de entender melhor", "value": "talvez", "next_node": "q_finance_soft" }, // Caminho 'tênue' - igual ao tradicional
                     { "id": "3", "label": "Prefiro apenas tratamentos tradicionais", "value": "tradicional", "next_node": "q_finance_soft" } // Caminho 'tênue'
                 ],
                 "save_as": "interesse_moderno"
