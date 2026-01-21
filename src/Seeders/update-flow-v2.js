@@ -48,7 +48,8 @@ const updateFlowV2 = async () => {
             "q_finance_soft": {
                 "type": "question",
                 "content": "Alguns tratamentos podem envolver investimento particular. Você se sente confortável em avaliar opções terapêuticas que eventualmente não sejam cobertas pelo convênio?",
-                "options": [{ "id": "1", "label": "Sim", "value": "sim", "next_node": "q_goal_soft" }, { "id": "2", "label": "Depende do custo", "value": "depende", "next_node": "q_goal_soft" }, { "id": "3", "label": "Prefiro somente opções cobertas pelo plano", "value": "somente_plano", "next_node": "descarte_convenio" }],
+                "content": "Alguns tratamentos podem envolver investimento particular. Você se sente confortável em avaliar opções terapêuticas que eventualmente não sejam cobertas pelo convênio?",
+                "options": [{ "id": "1", "label": "Sim", "value": "sim", "next_node": "q_goal_soft" }, { "id": "2", "label": "Depende do custo", "value": "depende", "next_node": "q_goal_soft" }, { "id": "3", "label": "Prefiro somente opções cobertas pelo plano", "value": "somente_plano", "next_node": "q_goal_soft" }], // Agora continua o fluxo suave
                 "save_as": "financeiro_soft"
             },
             "q_goal_soft": {
@@ -74,7 +75,8 @@ const updateFlowV2 = async () => {
             "q_finance": {
                 "type": "question",
                 "content": "Alguns tratamentos podem envolver investimento particular. Você se sente confortável em avaliar opções terapêuticas que eventualmente não sejam cobertas pelo convênio?",
-                "options": [{ "id": "1", "label": "Sim", "value": "sim", "next_node": "q_goal" }, { "id": "2", "label": "Depende do custo", "value": "depende", "next_node": "q_goal" }, { "id": "3", "label": "Prefiro somente opções cobertas pelo plano", "value": "somente_plano", "next_node": "descarte_convenio" }],
+                "content": "Alguns tratamentos podem envolver investimento particular. Você se sente confortável em avaliar opções terapêuticas que eventualmente não sejam cobertas pelo convênio?",
+                "options": [{ "id": "1", "label": "Sim", "value": "sim", "next_node": "q_goal" }, { "id": "2", "label": "Depende do custo", "value": "depende", "next_node": "q_goal" }, { "id": "3", "label": "Prefiro somente opções cobertas pelo plano", "value": "somente_plano", "next_node": "q_goal" }], // Agora continua o fluxo normal
                 "save_as": "financeiro"
             },
             "q_problem": {
