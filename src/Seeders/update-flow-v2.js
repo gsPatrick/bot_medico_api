@@ -61,7 +61,7 @@ const updateFlowV2 = async () => {
             "q_location_soft": {
                 "type": "question",
                 "content": "Você mora em:",
-                "options": [{ "id": "1", "label": "Grande Vitória", "value": "grande_vitoria", "next_node": "descarte_frio" }, { "id": "2", "label": "Outra cidade / outro estado", "value": "outra_cidade", "next_node": "descarte_frio" }], // Fim da linha: Descarte
+                "options": [{ "id": "1", "label": "Grande Vitória", "value": "grande_vitoria", "next_node": "success_handover" }, { "id": "2", "label": "Outra cidade / outro estado", "value": "outra_cidade", "next_node": "success_handover" }], // Fim da linha: Secretária
                 "save_as": "localizacao_soft"
             },
             // -------------------------------------------------------
